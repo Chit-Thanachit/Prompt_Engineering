@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>แผงควบคุมแอดมิน — AI Customer Service Assistant</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%9B%8D%EF%B8%8F%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand"><span class="logo">🛍️</span> Good Everyday Shop</div>
+    <nav>
+      <a href="index.html">หน้าร้าน</a>
+      <a href="admin.html" class="active">แผงควบคุมแอดมิน</a>
+    </nav>
+  </header>
+
+  <main class="admin-wrap">
+    <h1 style="margin-bottom:2px;">แผงควบคุมแอดมิน</h1>
+    <p style="color:#6b7280;margin-top:0;">
+      จัดการ System Prompt, ตัวอย่าง Few-shot, ฐานความรู้สินค้า/นโยบายร้าน
+      และติดตามคำถามที่ระบบส่งต่อให้พนักงาน — ทั้งหมดนี้แก้ไขได้โดยไม่ต้องเขียนโค้ด (FR-05, FR-06)
+    </p>
+
+    <!-- สถิติภาพรวม -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="label">ข้อความวันนี้</div>
+        <div class="value" id="stat-total">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">อัตราตอบอัตโนมัติ</div>
+        <div class="value green" id="stat-auto">0%</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">ส่งต่อพนักงานวันนี้</div>
+        <div class="value orange" id="stat-escalated">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">รายการในฐานความรู้</div>
+        <div class="value" id="stat-kb">0</div>
+      </div>
+    </div>
+
+    <div class="admin-tabs">
+      <button data-target="tab-prompt" class="active">System Prompt</button>
+      <button data-target="tab-fewshot">Few-shot Examples</button>
+      <button data-target="tab-kb">ฐานความรู้สินค้า</button>
+      <button data-target="tab-logs">ประวัติ / ส่งต่อพนักงาน</button>
+      <button data-target="tab-settings">ตั้งค่าระบบ</button>
+    </div>
+
+    <!-- System Prompt -->
+    <section id="tab-prompt" class="panel active">
+      <h2>System Prompt</h2>
+      <p class="hint">กำหนดบทบาท น้ำเสียง และกฎการตอบของผู้ช่วย AI (FR-05)</p>
+      <textarea id="system-prompt-input" style="min-height:220px"></textarea>
+      <div class="toolbar" style="margin-top:12px;">
+        <button class="btn ghost sm" id="reset-system-prompt">รีเซ็ตเป็นค่าเริ่มต้น</button>
+        <button class="btn primary" id="save-system-prompt">บันทึก System Prompt</button>
+      </div>
+    </section>
+
+    <!-- Few-shot -->
+    <section id="tab-fewshot" class="panel">
+      <h2>ตัวอย่าง Few-shot</h2>
+      <p class="hint">ตัวอย่างคำถาม-คำตอบ เพื่อให้ AI เลียนแบบน้ำเสียงและรูปแบบการตอบ</p>
+      <div id="fewshot-list"></div>
+      <div class="toolbar">
+        <button class="btn ghost sm" id="add-fewshot">+ เพิ่มตัวอย่าง</button>
+        <button class="btn primary" id="save-fewshot">บันทึกตัวอย่างทั้งหมด</button>
+      </div>
+    </section>
+
+    <!-- Knowledge Base -->
+    <section id="tab-kb" class="panel">
+      <h2>ฐานความรู้สินค้าและนโยบายร้าน</h2>
+      <p class="hint">แอดมินอัปโหลด/แก้ไขข้อมูลได้เอง (FR-06) — ระบบจะจับคู่คำถามลูกค้ากับ "คำสำคัญ" ในแต่ละรายการ</p>
+      <div id="kb-list"></div>
+      <div class="toolbar">
+        <button class="btn ghost sm" id="add-kb">+ เพิ่มรายการความรู้</button>
+        <button class="btn primary" id="save-kb">บันทึกฐานความรู้ทั้งหมด</button>
+      </div>
+    </section>
+
+    <!-- Logs -->
+    <section id="tab-logs" class="panel">
+      <h2>ประวัติการสนทนา / คำถามที่ส่งต่อพนักงาน</h2>
+      <p class="hint">ดูประวัติทั้งหมด (FR-07) และปิดงานที่พนักงานดำเนินการแล้ว</p>
+      <div class="toolbar">
+        <select id="log-filter" style="max-width:220px;">
+          <option value="all">ทั้งหมด</option>
+          <option value="escalated">ส่งต่อพนักงานเท่านั้น</option>
+          <option value="answered">ตอบอัตโนมัติเท่านั้น</option>
+        </select>
+        <button class="btn danger sm" id="clear-logs">ล้างประวัติทั้งหมด</button>
+      </div>
+      <div id="logs-table-wrap"></div>
+    </section>
+
+    <!-- Settings -->
+    <section id="tab-settings" class="panel">
+      <h2>ตั้งค่าระบบ</h2>
+
+      <label>ชื่อร้าน (แสดงในหน้าต่างแชท)</label>
+      <input type="text" id="cfg-shop-name" />
+
+      <label>เกณฑ์ความมั่นใจขั้นต่ำก่อนตอบอัตโนมัติ: <span id="cfg-threshold-val"></span></label>
+      <input type="range" id="cfg-threshold" min="0" max="100" step="5" />
+      <p class="hint">ต่ำกว่าเกณฑ์นี้ระบบจะส่งต่อพนักงานทันที (อ้างอิง NFR-03)</p>
+
+      <hr style="border:none;border-top:1px solid var(--border);margin:18px 0;" />
+
+      <h2 style="font-size:15px;">เชื่อมต่อ LLM API จริง (ให้ AI ใช้ Prompt Engineering เต็มรูปแบบ)</h2>
+      <p class="hint">
+        เมื่อเปิดใช้งาน ระบบจะส่ง System Prompt + Few-shot + ฐานความรู้ที่เกี่ยวข้อง +
+        ประวัติการสนทนา ไปให้ LLM จริงประมวลผลและตอบกลับแบบ Generative (ไม่ตายตัวเหมือนโหมดจำลอง)
+        หากเรียก API ไม่สำเร็จ ระบบจะ fallback กลับไปใช้ Rule-based Engine ให้อัตโนมัติ
+      </p>
+
+      <label>ผู้ให้บริการ LLM</label>
+      <select id="cfg-api-provider">
+        <option value="gemini">Google Gemini (แนะนำ — มี Free Tier เรียกจากเบราว์เซอร์ได้ตรง ๆ)</option>
+        <option value="openai">OpenAI-compatible (OpenAI / Groq / Together ฯลฯ — สำหรับทดสอบเท่านั้น)</option>
+      </select>
+
+      <div id="gemini-hint" class="hint" style="background:#eff6ff;border:1px dashed #93c5fd;border-radius:8px;padding:10px 12px;margin-top:8px;">
+        📌 ขอ API Key ฟรีได้ที่
+        <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>
+        (ล็อกอินด้วย Google Account แล้วกด "Create API key" ใช้เวลาไม่ถึง 1 นาที ไม่ต้องผูกบัตรเครดิต)
+      </div>
+
+      <label><input type="checkbox" id="cfg-use-real-api" style="width:auto;margin-right:6px;" /> เปิดใช้งานการเรียก LLM API จริง</label>
+
+      <div class="row" id="openai-fields" style="display:none;">
+        <div>
+          <label>API Base URL</label>
+          <input type="text" id="cfg-api-base" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Model</label>
+          <input type="text" id="cfg-api-model" />
+        </div>
+        <div>
+          <label>API Key</label>
+          <input type="password" id="cfg-api-key" placeholder="วาง API Key ที่นี่" />
+        </div>
+      </div>
+      <p> 
+      </p>
+      <p class="hint">
+        ⚠️ วิธีนี้เรียก API ตรงจากเบราว์เซอร์ (client-side) เหมาะกับการทดสอบ/สาธิตในชั้นเรียน
+        หากนำไปใช้งานจริงกับลูกค้าทั่วไป ควรย้าย API Key ไปไว้ฝั่ง Backend เพื่อความปลอดภัย
+        (ดูหัวข้อ "แนวทางพัฒนาต่อ" ในเอกสารประกอบ)
+      </p>
+
+      <div class="toolbar" style="margin-top:4px;">
+        <button class="btn ghost sm" id="test-connection">🔌 ทดสอบการเชื่อมต่อ</button>
+        <span></span>
+      </div>
+      <div id="test-connection-result" style="margin-top:8px;"></div>
+
+      <div class="toolbar" style="margin-top:16px;">
+        <button class="btn danger sm" id="reset-all-data">รีเซ็ตข้อมูลสาธิตทั้งหมด</button>
+        <button class="btn primary" id="save-settings">บันทึกการตั้งค่า</button>
+      </div>
+    </section>
+
+    <p class="footer-note">
+      ต้นแบบสำหรับ BBAIS219 หัวข้อพิเศษในการพัฒนาซอฟต์แวร์ — ใบงานที่ 5<br/>
+      กรณีศึกษา: ระบบผู้ช่วยตอบคำถามลูกค้าอัตโนมัติด้วย Prompt Engineering
+    </p>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

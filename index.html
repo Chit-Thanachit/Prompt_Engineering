@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Good Everyday Shop — ร้านค้าออนไลน์ตัวอย่าง</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%9B%8D%EF%B8%8F%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand"><span class="logo">🛍️</span> Good Everyday Shop</div>
+    <nav>
+      <a href="index.html" class="active">หน้าร้าน</a>
+      <a href="admin.html">แผงควบคุมแอดมิน</a>
+    </nav>
+  </header>
+
+  <main class="hero">
+    <h1>ยินดีต้อนรับสู่ร้านของเรา 🌿</h1>
+    <p class="sub">
+      หน้าเว็บนี้คือ "หน้าร้านตัวอย่าง (Demo Storefront)" สำหรับสาธิตต้นแบบ
+      ระบบผู้ช่วยตอบคำถามลูกค้าอัตโนมัติด้วย Prompt Engineering — คลิกไอคอนแชทมุมขวาล่าง
+      เพื่อทดลองพูดคุยกับ "น้องช่วยดี"
+    </p>
+
+    <div class="product-grid">
+      <div class="product-card"><div class="thumb">👕</div><h3>เสื้อยืดคอตตอน 100%</h3><div class="price">฿259</div></div>
+      <div class="product-card"><div class="thumb">👜</div><h3>กระเป๋าผ้าแคนวาส</h3><div class="price">฿390</div></div>
+      <div class="product-card"><div class="thumb">🧴</div><h3>เซรั่มบำรุงผิวหน้า</h3><div class="price">฿690</div></div>
+      <div class="product-card"><div class="thumb">🕯️</div><h3>เทียนหอมอโรมา</h3><div class="price">฿220</div></div>
+      <div class="product-card"><div class="thumb">👟</div><h3>รองเท้าผ้าใบลำลอง</h3><div class="price">฿890</div></div>
+      <div class="product-card"><div class="thumb">🧢</div><h3>หมวกแก๊ปปัก</h3><div class="price">฿180</div></div>
+    </div>
+
+    <div class="faq-hint">
+      💡 <strong>ลองพิมพ์ถามดูได้เลย</strong> เช่น "จัดส่งกี่วันถึง", "คืนสินค้าได้ไหม",
+      "มีโปรโมชันอะไรบ้าง", "ชำระเงินช่องทางไหนได้บ้าง" — ระบบจะประมวลผลด้วย
+      System Prompt + ฐานความรู้ร้าน แล้วประเมินความมั่นใจก่อนตอบอัตโนมัติ
+      หากไม่มั่นใจจะส่งต่อพนักงานให้ทันที
+    </div>
+  </main>
+
+  <!-- ===== Chat Widget (หน้าจอที่ 1 ตามใบงานที่ 4) ===== -->
+  <button id="chat-launcher" aria-label="เปิดแชท">
+    💬
+    <span class="dot"></span>
+  </button>
+
+  <div id="chat-widget">
+    <div class="chat-header">
+      <div class="who">
+        <div class="avatar">🤖</div>
+        <div>
+          <div class="title">น้องช่วยดี — <span id="chat-shop-name"></span></div>
+          <div class="status"><span class="pulse"></span> ออนไลน์ตลอด 24 ชม.</div>
+        </div>
+      </div>
+      <button class="close" id="chat-close">✕</button>
+    </div>
+
+    <div class="chat-body" id="chat-body"></div>
+
+    <div class="chat-footer">
+      <div class="chat-quick" id="chat-quick"></div>
+      <form id="chat-form" class="chat-inputrow">
+        <input id="chat-input" type="text" placeholder="พิมพ์ข้อความ..." autocomplete="off" />
+        <button type="submit" class="send" aria-label="ส่ง">➤</button>
+      </form>
+      <button type="button" id="chat-human-btn" class="human-btn">💁 คุยกับพนักงานจริง</button>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/chat.js"></script>
+</body>
+</html>
