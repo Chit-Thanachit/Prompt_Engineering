@@ -55,26 +55,6 @@ python -m http.server 8000
 # แล้วเปิด http://localhost:8000
 ```
 
-## วิธี Deploy ขึ้น GitHub Pages
-
-1. สร้าง Repository ใหม่บน GitHub (Public) เช่นชื่อ `ai-customer-service-prototype`
-2. อัปโหลดไฟล์ทั้งหมดในโฟลเดอร์นี้ขึ้น Repository (หรือ `git push` ตามคำสั่งด้านล่าง)
-3. ไปที่ **Settings → Pages**
-4. ในหัวข้อ **Build and deployment** เลือก Source เป็น **Deploy from a branch**
-5. เลือก Branch เป็น `main` และโฟลเดอร์เป็น `/ (root)` แล้วกด **Save**
-6. รอสักครู่ ระบบจะให้ลิงก์เว็บไซต์ในรูปแบบ `https://<username>.github.io/<repo-name>/`
-
-```bash
-git init
-git add .
-git commit -m "AI Customer Service Assistant prototype (worksheet 5)"
-git branch -M main
-git remote add origin https://github.com/<username>/<repo-name>.git
-git push -u origin main
-```
-
-## ฟังก์ชันที่ทำได้ (Implemented)
-
 - ลูกค้าพิมพ์และส่งข้อความผ่านวิดเจ็ตแชทลอยมุมขวาล่างได้ (FR-01)
 - ระบบประกอบพร้อมต์อัตโนมัติจาก System Prompt + Few-shot + ฐานความรู้ที่เกี่ยวข้อง +
   คำถามลูกค้า (FR-02)
